@@ -20,6 +20,9 @@ import zj.taskmanager.util.SubTaskManager;
 @XmlRootElement(name = "task")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Task implements Comparable<Task> {
+    
+    private static final String[] fields = {"Name", "Priority", "Description", "Percent"};
+    
     private String name;
     private int priority;
     private String desc;
@@ -87,7 +90,11 @@ public class Task implements Comparable<Task> {
         this.subtaskList = subtasks;
     }
 
-    
+    public static String[] getFields() {
+        return fields;
+    }
+
+        
     /**
      *
      * @param t
@@ -100,6 +107,5 @@ public class Task implements Comparable<Task> {
             i = this.name.compareTo(t.name);
         return i;       
     }
-
 
 }

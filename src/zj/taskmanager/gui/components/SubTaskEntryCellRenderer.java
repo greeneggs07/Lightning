@@ -13,27 +13,25 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
+import zj.taskmanager.model.SubTask;
 import zj.taskmanager.model.Task;
 
 /**
  *
  * @author Owner
  */
-public class TaskEntryCellRenderer implements TableCellRenderer{
+public class SubTaskEntryCellRenderer implements TableCellRenderer{
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        Task task = (Task) value;
-        JLabel taskName = new JLabel((task.getName().length() > 17) ? task.getName().substring(0, 16) + "..." : task.getName());
-        JLabel taskDesc = new JLabel((task.getDesc().length() > 45) ? task.getDesc().substring(0, 44) + "..." : task.getDesc());
+        SubTask subTask = (SubTask) value;
+        JLabel taskName = new JLabel((subTask.getName().length() > 17) ? subTask.getName().substring(0, 16) + "..." : subTask.getName());
+        JLabel taskDesc = new JLabel((subTask.getDesc().length() > 45) ? subTask.getDesc().substring(0, 44) + "..." : subTask.getDesc());
         JProgressBar progressBar = new JProgressBar();
         JCheckBox checkBox = new JCheckBox();
         JPanel panel = new JPanel();
-        
-        if(task.getPercentComplete() == 100)
-            panel.setBackground(Color.yellow);
-        
+               
         checkBox.setEnabled(true);
-        progressBar.setValue(task.getPercentComplete());
+        progressBar.setValue(subTask.getPercentComplete());
         
         GroupLayout layout = new GroupLayout(panel);
         panel.setLayout(layout);

@@ -2,9 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package zj.taskmanage;
+package zj.taskmanager;
 
 import zj.taskmanager.gui.components.AgendaPanel;
+import zj.taskmanager.screens.AgendaScreen;
 
 /**
  *
@@ -18,12 +19,12 @@ public interface CommandDispatcher {
         ENTER,
         DELETE_TASK,
         ADD_TASK,
-        CHANGE_AGENDA
-    }
+        CHANGE_AGENDA,
+        EXIT_ON_ENTRY, START_UP_EXISTING, START_UP_NEW, SAVE, DOUBLE_CLICK, CHANGE_BUTTON, ADD_SUBTASK, ADD_TASK_BUTTON, UPDATE_SUBTASK, DOUBLE_CLICK_SUBTASK, UPDATE_TASK}
     
-    void setAgendaPanel(AgendaPanel agendaPanel);
+    void setAgendaScreen(AgendaScreen agendaScreen);
     
-    AgendaPanel getAgendaPanel();
+    AgendaScreen getAgendaScreen();
     
     void dispatch(Command command);
     

@@ -15,6 +15,7 @@ public class SubTask implements Comparable<SubTask> {
     private String name;
     private int priority;
     private String desc;
+    private int percentComplete;
 
     public String getName() {
         return name;
@@ -40,6 +41,15 @@ public class SubTask implements Comparable<SubTask> {
         this.desc = desc;
     }
 
+    public int getPercentComplete() {
+        return percentComplete;
+    }
+
+    public void setPercentComplete(int percentComplete) {
+        this.percentComplete = percentComplete;
+    }
+
+        
     @Override
     public int compareTo(SubTask s) {
         int i = this.priority - s.priority;

@@ -26,7 +26,7 @@ public class TestingTaskEntryTable extends javax.swing.JDialog {
      */
     public TestingTaskEntryTable(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
-                ArrayList<Task> tasks = new ArrayList<>();
+                ArrayList<Task> tasks = new ArrayList<Task>();
 
     
     // create books
@@ -36,7 +36,7 @@ public class TestingTaskEntryTable extends javax.swing.JDialog {
     task1.setPriority(1);
     task1.setPercentComplete(44);
     
-    ArrayList<SubTask> subtasks = new ArrayList<>();
+    ArrayList<SubTask> subtasks = new ArrayList<SubTask>();
     SubTask stask1 = new SubTask();
     stask1.setName("task 1.1");
     stask1.setDesc("task 1.1 desc");

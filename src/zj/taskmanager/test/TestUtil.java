@@ -2,33 +2,26 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package zj.taskmanage;
+package zj.taskmanager.test;
 
-import java.awt.Point;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import zj.taskmanager.model.SubTask;
 import zj.taskmanager.model.Task;
-import zj.taskmanager.screens.AgendaScreen;
 
 /**
  *
  * @author Owner
  */
-public class Application {
-    //private ArrayList<Task> tasks;
-    
-    public static void main(String[] args){
-        //test
-      ArrayList<Task>  tasks = new ArrayList<>();
+public class TestUtil {
+    public ArrayList<Task> getTestArray(){
+        ArrayList<Task>  tasks = new ArrayList<Task>();
         Task task1 = new Task();
     task1.setName("task 1");
     task1.setDesc("task 1 desc");
     task1.setPriority(1);
     task1.setPercentComplete(44);
     
-    ArrayList<SubTask> subtasks = new ArrayList<>();
+    ArrayList<SubTask> subtasks = new ArrayList<SubTask>();
     SubTask stask1 = new SubTask();
     stask1.setName("task 1.1");
     stask1.setDesc("task 1.1 desc");
@@ -66,20 +59,7 @@ public class Application {
     subtasks2.add(stask23);
     task2.setSubtaskList(subtasks2);
     tasks.add(task2);
-        //test
-        AgendaScreen aS = new AgendaScreen(tasks);
-        aS.getAgendaPanel().addRowListener(new MouseAdapter(){
-            public void mouseClicked(MouseEvent e){
-                if (e.getClickCount() == 2){ //TODO
-                    System.out.println(" double click on task:" );
-                    Task clickedTask = aS.getAgendaPanel().getValueAtMouse(e);
-                    System.out.println(clickedTask.getName());
-                }
-            }
-         });
-        aS.setVisible(true);
-    }
     
+    return tasks;
+    }
 }
-
-class 

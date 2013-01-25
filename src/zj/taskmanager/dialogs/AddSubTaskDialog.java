@@ -8,8 +8,6 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Calendar;
-import java.util.Date;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -17,43 +15,35 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JSlider;
 import javax.swing.JSpinner;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.SpinnerDateModel;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import zj.taskmanager.CommandDispatcher;
+import zj.taskmanager.model.SubTask;
 import zj.taskmanager.model.Task;
 
 /**
  *
  * @author Owner
  */
-public class EditTaskDialog extends JDialog {
+public class AddSubTaskDialog extends JDialog {
 
     private CommandDispatcher commandDispatcher;
     private JPanel contentPanel;
     private JPanel taskFieldsPanel;
     private JTextField nameText;
     private JSpinner prioritySpinner;
-    private JSpinner dateSpinner;
     private JScrollPane descScrollPane;
     private JTextArea descText;
     private JPanel buttonPanel;  
     private JButton cancelButton;
-    private JButton updateButton;
-    private JSlider percentSlider;
-    private JLabel percentText;
-    private Task task;
+    private JButton addButton;
     
-    public EditTaskDialog(Frame owner, boolean modal, CommandDispatcher commandDispatcher, Task task) {
+    public AddSubTaskDialog(Frame owner, boolean modal, CommandDispatcher commandDispatcher) {
         super(owner, modal);
-        this.task = task;
         this.commandDispatcher = commandDispatcher;
         initComponents();
     }
@@ -66,15 +56,10 @@ public class EditTaskDialog extends JDialog {
         taskFieldsPanel = new JPanel();
         JLabel nameLabel = new JLabel("Name:");
         JLabel priorityLabel = new JLabel("Priority:");
-        JLabel dateLabel = new JLabel("Est. Comp. Date:");
         JLabel descLabel = new JLabel("Description:");
-        JLabel percentLabel = new JLabel("Percent Complete:");
-        percentText = new JLabel(task.getPercentComplete()+"");
-        createDateSpinner();
-        createPercentSlider();
-        nameText = new JTextField(task.getName());
+        nameText = new JTextField(25);
         createPrioritySpinner();
-        descText = new JTextArea(task.getDesc());
+        descText = new JTextArea(4, 50);
         descText.setLineWrap(true);
         descText.setWrapStyleWord(true);
         descScrollPane = new JScrollPane(descText, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -90,16 +75,11 @@ public class EditTaskDialog extends JDialog {
                             .addGroup(taskFieldsLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
                                 .addComponent(nameLabel)
                                 .addComponent(priorityLabel)
-                                .addComponent(dateLabel)
-                                .addComponent(percentText)
                                 .addComponent(descLabel))
                             .addGroup(taskFieldsLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                 .addComponent(nameText)
-                                .addComponent(prioritySpinner)
-                                .addComponent(dateSpinner)
-                                .addComponent(percentLabel)))
-                            .addComponent(descScrollPane)
-                            .addComponent(percentSlider)));
+                                .addComponent(prioritySpinner)))
+                        .addComponent(descScrollPane)));
         taskFieldsLayout.setVerticalGroup(
                 taskFieldsLayout.createSequentialGroup()
                     .addGroup(taskFieldsLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
@@ -108,20 +88,13 @@ public class EditTaskDialog extends JDialog {
                     .addGroup(taskFieldsLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                         .addComponent(priorityLabel)
                         .addComponent(prioritySpinner))
-                    .addGroup(taskFieldsLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                        .addComponent(dateLabel)
-                        .addComponent(dateSpinner))
-                    .addGroup(taskFieldsLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                        .addComponent(percentLabel)
-                        .addComponent(percentText))
-                    .addComponent(percentSlider)
                     .addComponent(descLabel)
                     .addComponent(descScrollPane));
         
-        createUpdateButton();
-        createCancelButton();
         
         buttonPanel = new JPanel();
+        cancelButton = getCancelButton();
+        addButton = getAddButton();
         
         GroupLayout buttonPanelLayout = new GroupLayout(buttonPanel);
         buttonPanel.setLayout(buttonPanelLayout);
@@ -130,12 +103,12 @@ public class EditTaskDialog extends JDialog {
                 buttonPanelLayout.createSequentialGroup()
                     .addComponent(cancelButton)
                     .addGap(0, 200, Short.MAX_VALUE)
-                    .addComponent(updateButton));
+                    .addComponent(addButton));
         buttonPanelLayout.setVerticalGroup(
                 buttonPanelLayout.createSequentialGroup()
                     .addGroup(buttonPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                         .addComponent(cancelButton)
-                        .addComponent(updateButton)));
+                        .addComponent(addButton)));
         
         
         GroupLayout contentPanelLayout = new GroupLayout(contentPanel);
@@ -154,32 +127,31 @@ public class EditTaskDialog extends JDialog {
         this.setTitle("Add Task");
     }
 
-
-    private void createUpdateButton() {
-        updateButton = new JButton("Update");
-        updateButton.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                updateButtonActionPerformed(e);
-            }
-        });
+    private JButton getAddButton() {
+        if(addButton == null){
+            addButton = new JButton("Add");
+            addButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    addButtonActionPerformed(e);
+                }
+            });
+        }
+        return addButton;
     }
     
-    private void updateButtonActionPerformed(ActionEvent e){
-        if(fieldsValid()){
+    private void addButtonActionPerformed(ActionEvent e){
+        if (validTask()){
             setVisible(false);
+            SubTask task = new SubTask();
             task.setName(nameText.getText());
-            task.setDesc(descText.getText());
-            task.setEstCompleteDate((Date)dateSpinner.getValue());
-            task.setPriority(Integer.parseInt(prioritySpinner.getValue().toString()));
-            task.setPercentComplete(percentSlider.getValue());
-            commandDispatcher.dispatch(CommandDispatcher.Command.UPDATE_TASK);
+            task.setDesc((descText.getText() != null) ? descText.getText() : "");
+            commandDispatcher.dispatch(CommandDispatcher.Command.ADD_TASK, task);
             dispose();
         }
     }
-
-    private boolean fieldsValid() {
+    
+    private boolean validTask(){
         boolean retVal = false;
         if(nameText.getText() == null || nameText.getText().isEmpty())
             JOptionPane.showMessageDialog(null, "Name cannot be blank.");
@@ -188,8 +160,9 @@ public class EditTaskDialog extends JDialog {
         //TODO: finish task validation
         return retVal;
     }
-    
-    private void createCancelButton() {
+
+    private JButton getCancelButton() {
+        if (cancelButton == null) {
             cancelButton = new JButton("Cancel");
             cancelButton.addActionListener(new ActionListener() {
                 @Override
@@ -197,37 +170,18 @@ public class EditTaskDialog extends JDialog {
                     cancelButtonActionPerformed(e);
                 }
             });
+        }
+        return cancelButton;
     }
     
     private void cancelButtonActionPerformed(ActionEvent e){
         setVisible(false);
         dispose();
     }
-
-    private void createDateSpinner() {
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.YEAR, -2);
-        Date minDate = cal.getTime();
-        cal.add(Calendar.YEAR, 4);
-        Date maxDate = cal.getTime();
-        SpinnerDateModel model = new SpinnerDateModel(task.getEstCompleteDate(), minDate, maxDate, Calendar.YEAR);
-        dateSpinner = new JSpinner(model);
-    }
-
+    
     private void createPrioritySpinner() {
-        SpinnerModel priorityModel = new SpinnerNumberModel(task.getPriority(), 0, 10, 1);
+        SpinnerModel priorityModel = new SpinnerNumberModel(0, 0, 10, 1);
         prioritySpinner = new JSpinner(priorityModel);
     }
     
-    private void createPercentSlider() {
-        percentSlider = new JSlider(0, 100, task.getPercentComplete());
-        percentSlider.addChangeListener(new ChangeListener() {
-
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                percentText.setText(""+percentSlider.getValue());
-            }
-        });
-    }
 }
-
